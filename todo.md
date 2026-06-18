@@ -1,0 +1,5 @@
+- [ ] Shrink prefrences window default size
+- [ ] Prevent user from resizing prefrences window
+- [ ] Fix autostart (Doesn't apply autostart even if the user wants it)
+- [ ] Check if Fedora is right (what does flathub use to build Eloquent)
+- [ ] Check if Java changes are neccessary (differrent sources)

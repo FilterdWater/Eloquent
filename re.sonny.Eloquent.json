@@ -4,7 +4,6 @@
   "runtime-version": "49",
   "sdk": "org.gnome.Sdk",
   "command": "re.sonny.Eloquent",
-  "sdk-extensions": ["org.freedesktop.Sdk.Extension.openjdk21"],
   "finish-args": [
     "--share=network",
     "--share=ipc",
@@ -53,15 +52,26 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://internal1.languagetool.org/snapshots/LanguageTool-20251204-snapshot.zip",
-          "sha256": "90801bb00defd428c21c3c0d50aa7a80ef16eadd6d27cb516852ef86dcae2a88"
+          "url": "https://languagetool.org/download/LanguageTool-6.6.zip",
+          "sha256": "53600506b399bb5ffe1e4c8dec794fd378212f14aaf38ccef9b6f89314d11631"
         }
       ],
       "modules": [
         {
           "name": "openjdk",
           "buildsystem": "simple",
-          "build-commands": ["/usr/lib/sdk/openjdk21/install.sh"]
+          "build-commands": [
+            "mkdir -p /app/jdk /app/jre",
+            "cp -ra bin lib conf include jmods release /app/jdk/",
+            "cp -ra bin lib conf include jmods release /app/jre/"
+          ],
+          "sources": [
+            {
+              "type": "archive",
+              "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.11%2B10/OpenJDK21U-jdk_x64_linux_hotspot_21.0.11_10.tar.gz",
+              "sha256": "4b2220e232a97997b436ca6ab15cbf70171ecff52958a46159dfa5a8c44ca4de"
+            }
+          ]
         }
       ]
     },
