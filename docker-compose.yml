@@ -1,0 +1,21 @@
+services:
+  dev:
+    build:
+      context: .
+      args:
+        USER_ID: ${UID:-1000}
+        GROUP_ID: ${GID:-1000}
+    volumes:
+      - .:/app
+      - ${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY:-wayland-0}:/run/user/${UID:-1000}/${WAYLAND_DISPLAY:-wayland-0}:ro
+    environment:
+      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
+      - XDG_RUNTIME_DIR=/run/user/${UID:-1000}
+      - NO_AT_BRIDGE=1
+      - LANGUAGETOOL_DIR=/opt/LanguageTool
+      - LANGUAGETOOL_CONFIG=/opt/server.properties
+      - GSETTINGS_SCHEMA_DIR=/app/build/install/share/glib-2.0/schemas
+      - GSETTINGS_BACKEND=memory
+    working_dir: /app
+    stdin_open: true
+    tty: true

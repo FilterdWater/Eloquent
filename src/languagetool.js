@@ -12,6 +12,9 @@ let proc_language_tool;
 let ready = false
 
 const PORT = 8081;
+const HOST = GLib.getenv("LANGUAGETOOL_HOST") || "127.0.0.1";
+const LANGUAGETOOL_DIR = GLib.getenv("LANGUAGETOOL_DIR") || "/app/LanguageTool";
+const LANGUAGETOOL_CONFIG = GLib.getenv("LANGUAGETOOL_CONFIG") || "/app/share/server.properties";
 
 async function onReady() {
   if (ready) return;
@@ -19,13 +22,25 @@ async function onReady() {
 }
 
 export async function startLanguageTool() {
+  if (ready) return;
+
+  if (HOST !== "127.0.0.1") {
+    signals.emit("ready");
+    ready = true;
+    return;
+  }
+
   if (proc_language_tool) return;
 
   proc_language_tool = Gio.Subprocess.new(
     [
       "java",
+      // Workaround for JAXP entity size limit on Java 17+
+      // https://forum.languagetool.org/t/error-running-server-on-java-17/7441
+      "-Djdk.xml.totalEntitySizeLimit=2147480000",
+      "-Djdk.xml.entityExpansionLimit=2147480000",
       "-cp",
-      "/app/LanguageTool/languagetool-server.jar",
+      `${LANGUAGETOOL_DIR}/languagetool-server.jar`,
       "org.languagetool.server.HTTPServer",
       // Required for Thunderbird
       // https://forum.languagetool.org/t/problem-with-local-server-with-thunderbird/7313
@@ -33,7 +48,7 @@ export async function startLanguageTool() {
       "--port",
       PORT.toString(),
       "--config",
-      "/app/share/server.properties"
+      LANGUAGETOOL_CONFIG,
     ],
     // Gio.SubprocessFlags.NONE,
     Gio.SubprocessFlags.INHERIT_FDS | Gio.SubprocessFlags.STDOUT_PIPE,
@@ -69,7 +84,7 @@ export async function request(method, path, fields = {}) {
 
   const message = Soup.Message.new_from_encoded_form(
     method,
-    `http://127.0.0.1:${PORT}/v2/${path}`,
+    `http://${HOST}:${PORT}/v2/${path}`,
     encoded,
   );
 

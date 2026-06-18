@@ -5,6 +5,7 @@ import Xdp from "gi://Xdp";
 
 import Window from "./window.js";
 import About from "./about.js";
+import Preferences, { syncAutostart } from "./Preferences.js";
 import ShortcutsWindow from "./ShortcutsWindow.js";
 import { startLanguageTool, stopLanguageTool } from "./languagetool.js";
 
@@ -12,10 +13,20 @@ import "./style.css";
 
 const portal = new Xdp.Portal();
 
+function tryCreateSettings() {
+  try {
+    return new Gio.Settings({ schema_id: "re.sonny.Eloquent" });
+  } catch {
+    return null;
+  }
+}
+
 export default function Application() {
   portal
     .set_background_status("LanguageTool server running", null)
     .catch(console.error);
+
+  const settings = tryCreateSettings();
 
   const application = new Adw.Application({
     application_id: "re.sonny.Eloquent",
@@ -24,20 +35,20 @@ export default function Application() {
   application.hold();
 
   application.connect("activate", () => {
-    // const { window } =
-    Window({
+    const { window } = Window({
       application,
+      settings,
     });
 
+    syncAutostart();
+
     (async () => {
-      // See https://github.com/sonnyp/Eloquent/issues/46
-      // const parent = XdpGtk.parent_new_gtk(window);
       const parent = null;
       const success = await portal.request_background(
         parent,
         "Run LanguageTool in the background to make Eloquent faster and use 3rd party integrations.",
         ["re.sonny.Eloquent", "--gapplication-service"],
-        Xdp.BackgroundFlags.AUTOSTART,
+        null,
         null,
       );
       console.debug("request background succeeded", success);
@@ -63,6 +74,19 @@ export default function Application() {
   application.set_accels_for_action("app.quit", ["<Primary>Q"]);
 
   application.set_accels_for_action("window.close", ["<Primary>W"]);
+
+  const showPreferences = new Gio.SimpleAction({
+    name: "preferences",
+    parameter_type: null,
+  });
+  showPreferences.connect("activate", () => {
+    Preferences({
+      application,
+      window: application.get_active_window(),
+      settings,
+    });
+  });
+  application.add_action(showPreferences);
 
   const showAboutDialog = new Gio.SimpleAction({
     name: "about",

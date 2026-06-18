@@ -15,7 +15,7 @@ import "./icons/check-round-outline-symbolic.svg" assert { type: "icon" };
 
 let diagnostics = [];
 
-export default function Window({ application }) {
+export default function Window({ application, settings }) {
   const {
     window,
     text_view,
@@ -32,6 +32,15 @@ export default function Window({ application }) {
 
   if (__DEV__) window.add_css_class("devel");
   window.set_application(application);
+
+  window.connect("close-request", () => {
+    const exit_on_close = settings
+      ? settings.get_boolean("exit-on-close")
+      : true;
+    if (exit_on_close) {
+      application.quit();
+    }
+  });
 
   popover_suggestion.buffer = buffer;
 

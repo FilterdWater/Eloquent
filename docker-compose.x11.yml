@@ -1,0 +1,9 @@
+services:
+  dev:
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - ~/.Xauthority:/home/dev/.Xauthority:ro
+    environment:
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=/home/dev/.Xauthority
+      - XDG_RUNTIME_DIR=/tmp/runtime-dev

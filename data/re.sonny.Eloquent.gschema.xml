@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <schemalist gettext-domain="re.sonny.Eloquent">
-  <schema id="re.sonny.Eloquent" path="/re/sonny/Eloquent/"/>
+  <schema id="re.sonny.Eloquent" path="/re/sonny/Eloquent/">
+    <key name="exit-on-close" type="b">
+      <default>true</default>
+      <summary>Exit on close</summary>
+      <description>Whether to quit the application entirely when the window is closed, instead of keeping it running in the background.</description>
+    </key>
+    <key name="autostart" type="b">
+      <default>false</default>
+      <summary>Start on login</summary>
+      <description>Whether to start Eloquent automatically when you log in.</description>
+    </key>
+  </schema>
 </schemalist>

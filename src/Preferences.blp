@@ -1,0 +1,37 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.PreferencesWindow preferences_window {
+  width-request: 500;
+  height-request: 300;
+
+  Adw.PreferencesPage {
+    Adw.PreferencesGroup {
+      title: _("Window");
+
+      Adw.ActionRow row_exit_on_close {
+        title: _("Exit on close");
+        subtitle: _("Quit Eloquent entirely when closing the window. When disabled, Eloquent runs in the background to keep the LanguageTool server running");
+        activatable-widget: switch_exit_on_close;
+
+        Gtk.Switch switch_exit_on_close {
+          valign: center;
+        }
+      }
+    }
+
+    Adw.PreferencesGroup {
+      title: _("System");
+
+      Adw.ActionRow row_autostart {
+        title: _("Start on login");
+        subtitle: _("Automatically start Eloquent when you log in");
+        activatable-widget: switch_autostart;
+
+        Gtk.Switch switch_autostart {
+          valign: center;
+        }
+      }
+    }
+  }
+}
